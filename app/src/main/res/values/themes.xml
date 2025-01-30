@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.IOS_Calculator" parent="android:Theme.Material.Light.NoActionBar" >
+
+        <!-- Цвета темы -->
+<!--        <item name="colorPrimary">@color/purple_500</item>-->
+<!--        <item name="colorPrimaryDark">@color/purple_700</item>-->
+<!--        <item name="colorAccent">@color/teal_200</item>-->
+
+        <!-- Настройка окна -->
+        <item name="android:windowBackground">@color/white</item>
+        </style>
+
+        <!-- Тема для Splash Screen -->
+        <style name="Theme.IOS_Calculator.Splash" parent="Theme.SplashScreen">
+
+        <!-- Цвет фона Splash -->
+        <item name="windowSplashScreenBackground">@color/white</item>
+
+        <!-- Логотип -->
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/illustration</item>
+
+        <!-- Тема после Splash -->
+        <item name="postSplashScreenTheme">@style/Theme.IOS_Calculator</item>
+    </style>
+
+</resources>
