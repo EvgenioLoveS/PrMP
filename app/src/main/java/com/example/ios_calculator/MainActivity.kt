@@ -5,16 +5,12 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import kotlin.math.*
+import com.example.ios_calculator.logic.CalculatorLogic
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var tvDisplay: TextView
-    private var currentInput: String = "0"
-    private var previousInput: String = ""
-    private var operator: String? = null
-    private var isOperatorClicked: Boolean = false
-    private var isEqualsClicked: Boolean = false
+    private val calculatorLogic = CalculatorLogic()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -43,6 +39,11 @@ class MainActivity : ComponentActivity() {
         val btn7: Button = findViewById(R.id.btn7)
         val btn8: Button = findViewById(R.id.btn8)
         val btn9: Button = findViewById(R.id.btn9)
+        val btnSin: Button = findViewById(R.id.btnSin)
+        val btnCos: Button = findViewById(R.id.btnCos)
+        val btnTan: Button = findViewById(R.id.btnTan)
+        val btnCtg: Button = findViewById(R.id.btnCtg)
+        val btnSqrt: Button = findViewById(R.id.btnSqrt)
 
         val buttons = arrayOf(btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9)
         buttons.forEach { button ->
@@ -59,102 +60,76 @@ class MainActivity : ComponentActivity() {
         btnPlus.setOnClickListener { onOperatorClick("+") }
         btnEquals.setOnClickListener { onEqualsClick() }
         btnDot.setOnClickListener { onDotClick() }
+
+        // Обработчики тригонометрических функций
+        btnSin.setOnClickListener { onTrigonometricClick("sin") }
+        btnCos.setOnClickListener { onTrigonometricClick("cos") }
+        btnTan.setOnClickListener { onTrigonometricClick("tg") }
+        btnCtg.setOnClickListener { onTrigonometricClick("ctg") }
+        btnSqrt.setOnClickListener { onSqrtClick() }
     }
 
     private fun onNumberClick(button: Button) {
-        if (isEqualsClicked) {
-            currentInput = button.text.toString()
-            isEqualsClicked = false
+        calculatorLogic.currentInput = if (calculatorLogic.currentInput == "0") {
+            button.text.toString()
         } else {
-            if (currentInput.length < 9) {
-                currentInput = if (currentInput == "0" || isOperatorClicked) {
-                    button.text.toString()
-                } else {
-                    currentInput + button.text.toString()
-                }
-            }
+            calculatorLogic.currentInput + button.text.toString()
         }
-        tvDisplay.text = currentInput
-        isOperatorClicked = false
+        tvDisplay.text = calculatorLogic.currentInput
     }
+
 
     private fun onOperatorClick(op: String) {
-        if (isOperatorClicked) {
-            operator = op
-        } else {
-            if (operator != null) {
-                calculateResult()
-            }
-            previousInput = currentInput
-            operator = op
-            isOperatorClicked = true
+        if (calculatorLogic.operator != null) {
+            // Если оператор уже был введен, пересчитываем результат перед новым оператором
+            tvDisplay.text = calculatorLogic.calculateResult()
         }
+
+        calculatorLogic.previousInput = calculatorLogic.currentInput
+        calculatorLogic.operator = op
+        calculatorLogic.currentInput = "0"
     }
+
+
 
     private fun onEqualsClick() {
-        calculateResult()
-        operator = null
-        isEqualsClicked = true
-    }
-
-    private fun calculateResult() {
-        val num1 = previousInput.toDoubleOrNull()
-        val num2 = currentInput.toDoubleOrNull()
-
-        if (num1 != null && num2 != null) {
-            val result = when (operator) {
-                "+" -> num1 + num2
-                "-" -> num1 - num2
-                "×" -> num1 * num2
-                "/" -> if (num2 != 0.0) num1 / num2 else Double.NaN
-                else -> null
-            }
-            if (result != null && !result.isNaN()) {
-                currentInput = result.toString()
-                tvDisplay.text = currentInput
-            } else {
-                tvDisplay.text = "Error"
-                currentInput = "0"
-            }
-        }
+        tvDisplay.text = calculatorLogic.calculateResult()
     }
 
     private fun onClearClick() {
-        currentInput = "0"
-        previousInput = ""
-        operator = null
-        tvDisplay.text = currentInput
+        calculatorLogic.clear()
+        tvDisplay.text = calculatorLogic.currentInput
     }
 
     private fun onDeleteLast() {
-        if (currentInput.length > 1) {
-            currentInput = currentInput.dropLast(1)
-        } else {
-            currentInput = "0"
-        }
-        tvDisplay.text = currentInput
+        calculatorLogic.deleteLast()
+        tvDisplay.text = calculatorLogic.currentInput
     }
 
     private fun onPlusMinusClick() {
-        if (currentInput != "0") {
-            currentInput = if (currentInput.startsWith("-")) {
-                currentInput.substring(1)
-            } else {
-                "-$currentInput"
-            }
-            tvDisplay.text = currentInput
-        }
+        calculatorLogic.onPlusMinusClick()
+        tvDisplay.text = calculatorLogic.currentInput
     }
 
     private fun onPercentClick() {
-        currentInput = (currentInput.toDoubleOrNull()?.div(100)?.toString()) ?: "Error"
-        tvDisplay.text = currentInput
+        calculatorLogic.onPercentClick()
+        tvDisplay.text = calculatorLogic.currentInput
     }
 
     private fun onDotClick() {
-        if (!currentInput.contains(".")) {
-            currentInput += "."
-            tvDisplay.text = currentInput
+        // Логика для добавления точки
+        if (!calculatorLogic.currentInput.contains(".")) {
+            calculatorLogic.currentInput += "."
+            tvDisplay.text = calculatorLogic.currentInput
         }
+    }
+
+    private fun onTrigonometricClick(func: String) {
+        tvDisplay.text = calculatorLogic.onTrigonometricClick(func)
+    }
+
+    private fun onSqrtClick() {
+        calculatorLogic.onSqrtClick()
+        tvDisplay.text = calculatorLogic.currentInput
     }
 }
