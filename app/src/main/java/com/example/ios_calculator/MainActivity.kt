@@ -1,16 +1,22 @@
 package com.example.ios_calculator
 
 import android.os.Bundle
+import android.view.GestureDetector
+import android.view.MotionEvent
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.example.ios_calculator.API.GestureHandler
+import com.example.ios_calculator.API.HapticFeedbackHelper
 import com.example.ios_calculator.logic.CalculatorLogic
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var tvDisplay: TextView
     private val calculatorLogic = CalculatorLogic()
+    private lateinit var gestureDetector: GestureDetector
+    private lateinit var hapticFeedbackHelper: HapticFeedbackHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -18,70 +24,100 @@ class MainActivity : ComponentActivity() {
         setContentView(R.layout.activity_calculator)
 
         tvDisplay = findViewById(R.id.tvDisplay)
+        hapticFeedbackHelper = HapticFeedbackHelper(this) // Инициализация вибратора
 
-        val btnAC: Button = findViewById(R.id.btnAC)
-        val btnEntry: Button = findViewById(R.id.btnEntry)
-        val btnPlusMinus: Button = findViewById(R.id.btnPlusMinus)
-        val btnPercent: Button = findViewById(R.id.btnPercent)
-        val btnDivide: Button = findViewById(R.id.btnDivide)
-        val btnMultiply: Button = findViewById(R.id.btnMultiply)
-        val btnMinus: Button = findViewById(R.id.btnMinus)
-        val btnPlus: Button = findViewById(R.id.btnPlus)
-        val btnEquals: Button = findViewById(R.id.btnEquals)
-        val btnDot: Button = findViewById(R.id.btnDot)
-        val btn0: Button = findViewById(R.id.btn0)
-        val btn1: Button = findViewById(R.id.btn1)
-        val btn2: Button = findViewById(R.id.btn2)
-        val btn3: Button = findViewById(R.id.btn3)
-        val btn4: Button = findViewById(R.id.btn4)
-        val btn5: Button = findViewById(R.id.btn5)
-        val btn6: Button = findViewById(R.id.btn6)
-        val btn7: Button = findViewById(R.id.btn7)
-        val btn8: Button = findViewById(R.id.btn8)
-        val btn9: Button = findViewById(R.id.btn9)
-        val btnSin: Button = findViewById(R.id.btnSin)
-        val btnCos: Button = findViewById(R.id.btnCos)
-        val btnTan: Button = findViewById(R.id.btnTan)
-        val btnCtg: Button = findViewById(R.id.btnCtg)
-        val btnSqrt: Button = findViewById(R.id.btnSqrt)
+        // Инициализация жестов
+        gestureDetector = GestureDetector(this, GestureHandler(
+            onSwipeLeft = { onDeleteLast() },
+            onSwipeDown = { onClearClick() }
+        ))
 
-        val buttons = arrayOf(btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9)
-        buttons.forEach { button ->
-            button.setOnClickListener { onNumberClick(button) }
+
+        // Устанавливаем обработчик касаний на экран вывода
+        tvDisplay.setOnTouchListener { _, event ->
+            gestureDetector.onTouchEvent(event)
+            // Если событие - это нажатие, вызываем performClick
+            if (event.action == MotionEvent.ACTION_UP) {
+                tvDisplay.performClick()
+            }
+            true // Возвращаем true, чтобы указать, что событие обработано
         }
 
-        btnAC.setOnClickListener { onClearClick() }
-        btnEntry.setOnClickListener { onDeleteLast() }
-        btnPlusMinus.setOnClickListener { onPlusMinusClick() }
-        btnPercent.setOnClickListener { onPercentClick() }
-        btnDivide.setOnClickListener { onOperatorClick("/") }
-        btnMultiply.setOnClickListener { onOperatorClick("×") }
-        btnMinus.setOnClickListener { onOperatorClick("-") }
-        btnPlus.setOnClickListener { onOperatorClick("+") }
-        btnEquals.setOnClickListener { onEqualsClick() }
-        btnDot.setOnClickListener { onDotClick() }
-
-        // Обработчики тригонометрических функций
-        btnSin.setOnClickListener { onTrigonometricClick("sin") }
-        btnCos.setOnClickListener { onTrigonometricClick("cos") }
-        btnTan.setOnClickListener { onTrigonometricClick("tg") }
-        btnCtg.setOnClickListener { onTrigonometricClick("ctg") }
-        btnSqrt.setOnClickListener { onSqrtClick() }
+        setupButtons()
     }
 
-    private fun onNumberClick(button: Button) {
+    private fun setupButtons() {
+        val buttons = listOf(
+            findViewById<Button>(R.id.btnAC),
+            findViewById<Button>(R.id.btnEntry),
+            findViewById<Button>(R.id.btnPlusMinus),
+            findViewById<Button>(R.id.btnPercent),
+            findViewById<Button>(R.id.btnDivide),
+            findViewById<Button>(R.id.btnMultiply),
+            findViewById<Button>(R.id.btnMinus),
+            findViewById<Button>(R.id.btnPlus),
+            findViewById<Button>(R.id.btnEquals),
+            findViewById<Button>(R.id.btnDot),
+            findViewById<Button>(R.id.btn0),
+            findViewById<Button>(R.id.btn1),
+            findViewById<Button>(R.id.btn2),
+            findViewById<Button>(R.id.btn3),
+            findViewById<Button>(R.id.btn4),
+            findViewById<Button>(R.id.btn5),
+            findViewById<Button>(R.id.btn6),
+            findViewById<Button>(R.id.btn7),
+            findViewById<Button>(R.id.btn8),
+            findViewById<Button>(R.id.btn9),
+            findViewById<Button>(R.id.btnSin),
+            findViewById<Button>(R.id.btnCos),
+            findViewById<Button>(R.id.btnTan),
+            findViewById<Button>(R.id.btnCtg),
+            findViewById<Button>(R.id.btnSqrt)
+        )
+
+        buttons.forEach { button ->
+            button.setOnClickListener {
+                hapticFeedbackHelper.vibrate() // Виброотклик при нажатии кнопки
+                onButtonClick(button)
+            }
+        }
+    }
+
+    private fun onButtonClick(button: Button) {
+        when (button.id) {
+            R.id.btnAC -> onClearClick()
+            R.id.btnEntry -> onDeleteLast()
+            R.id.btnPlusMinus -> onPlusMinusClick()
+            R.id.btnPercent -> onPercentClick()
+            R.id.btnDivide -> onOperatorClick("/")
+            R.id.btnMultiply -> onOperatorClick("×")
+            R.id.btnMinus -> onOperatorClick("-")
+            R.id.btnPlus -> onOperatorClick("+")
+            R.id.btnEquals -> onEqualsClick()
+            R.id.btnDot -> onDotClick()
+            R.id.btnSin -> onTrigonometricClick("sin")
+            R.id.btnCos -> onTrigonometricClick("cos")
+            R.id.btnTan -> onTrigonometricClick("tg")
+            R.id.btnCtg -> onTrigonometricClick("ctg")
+            R.id.btnSqrt -> onSqrtClick()
+            else -> {
+                val number = button.text.toString()
+                onNumberClick(number)
+            }
+        }
+    }
+
+    private fun onNumberClick(number: String) {
         calculatorLogic.currentInput = if (calculatorLogic.currentInput == "0") {
-            button.text.toString()
+            number
         } else {
-            calculatorLogic.currentInput + button.text.toString()
+            calculatorLogic.currentInput + number
         }
         tvDisplay.text = calculatorLogic.currentInput
     }
 
-
     private fun onOperatorClick(op: String) {
         if (calculatorLogic.operator != null) {
-            // Если оператор уже был введен, пересчитываем результат перед новым оператором
             tvDisplay.text = calculatorLogic.calculateResult()
         }
 
@@ -89,8 +125,6 @@ class MainActivity : ComponentActivity() {
         calculatorLogic.operator = op
         calculatorLogic.currentInput = "0"
     }
-
-
 
     private fun onEqualsClick() {
         tvDisplay.text = calculatorLogic.calculateResult()
@@ -117,7 +151,6 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun onDotClick() {
-        // Логика для добавления точки
         if (!calculatorLogic.currentInput.contains(".")) {
             calculatorLogic.currentInput += "."
             tvDisplay.text = calculatorLogic.currentInput
