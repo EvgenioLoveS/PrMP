@@ -21,6 +21,14 @@
         android:textSize="36sp"
         android:textStyle="bold" />
 
+    <!-- Кнопка для перехода к истории вычислений -->
+    <Button
+        android:id="@+id/btnHistory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="История"
+        android:textSize="24sp"/>
+
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"

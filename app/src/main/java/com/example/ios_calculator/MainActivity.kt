@@ -1,6 +1,8 @@
 package com.example.ios_calculator
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.widget.Button
@@ -10,6 +12,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.ios_calculator.API.GestureHandler
 import com.example.ios_calculator.API.HapticFeedbackHelper
 import com.example.ios_calculator.logic.CalculatorLogic
+import com.example.ios_calculator.logic.ActionHistoryRepository
 
 class MainActivity : ComponentActivity() {
 
@@ -17,21 +20,29 @@ class MainActivity : ComponentActivity() {
     private val calculatorLogic = CalculatorLogic()
     private lateinit var gestureDetector: GestureDetector
     private lateinit var hapticFeedbackHelper: HapticFeedbackHelper
+    private lateinit var actionHistoryRepository: ActionHistoryRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calculator)
 
+        actionHistoryRepository = ActionHistoryRepository()
+
         tvDisplay = findViewById(R.id.tvDisplay)
         hapticFeedbackHelper = HapticFeedbackHelper(this) // Инициализация вибратора
+
+        // Установка обработчика нажатий на кнопку истории
+        findViewById<Button>(R.id.btnHistory).setOnClickListener {
+            val intent = Intent(this, HistoryActivity::class.java)
+            startActivity(intent)
+        }
 
         // Инициализация жестов
         gestureDetector = GestureDetector(this, GestureHandler(
             onSwipeLeft = { onDeleteLast() },
             onSwipeDown = { onClearClick() }
         ))
-
 
         // Устанавливаем обработчик касаний на экран вывода
         tvDisplay.setOnTouchListener { _, event ->
@@ -127,7 +138,17 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun onEqualsClick() {
-        tvDisplay.text = calculatorLogic.calculateResult()
+        val num1 = calculatorLogic.previousInput
+        val op = calculatorLogic.operator
+        val num2 = calculatorLogic.currentInput
+
+        val result = calculatorLogic.calculateResult()
+        tvDisplay.text = result
+
+        // Сохраняем корректное выражение в Firestore
+        if (num1.isNotEmpty() && op != null) {
+            actionHistoryRepository.saveActionHistory("$num1 $op $num2 = $result")
+        }
     }
 
     private fun onClearClick() {
@@ -165,4 +186,5 @@ class MainActivity : ComponentActivity() {
         calculatorLogic.onSqrtClick()
         tvDisplay.text = calculatorLogic.currentInput
     }
+
 }
