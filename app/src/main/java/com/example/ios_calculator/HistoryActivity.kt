@@ -7,8 +7,8 @@ import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ios_calculator.logic.ActionHistoryRepository
-import com.example.ios_calculator.logic.HistoryAdapter
+import com.example.ios_calculator.HistoryLogic.ActionHistoryRepository
+import com.example.ios_calculator.HistoryLogic.HistoryAdapter
 
 class HistoryActivity : ComponentActivity() {
 

@@ -1,4 +1,4 @@
-package com.example.ios_calculator.logic
+package com.example.ios_calculator.HistoryLogic
 
 
 import android.view.LayoutInflater

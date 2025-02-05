@@ -1,0 +1,77 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Назад"
+        android:padding="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/etBackgroundColor"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Цвет фона (пример: #FFFFFF)"
+        android:padding="10dp"
+        app:layout_constraintTop_toBottomOf="@id/btnBack"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <EditText
+        android:id="@+id/etTextColor"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Цвет текста (пример: #000000)"
+        android:padding="10dp"
+        app:layout_constraintTop_toBottomOf="@id/etBackgroundColor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <EditText
+        android:id="@+id/etStatusBarColor"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Цвет строки состояния (пример: #FF0000)"
+        android:padding="10dp"
+        app:layout_constraintTop_toBottomOf="@id/etTextColor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <EditText
+        android:id="@+id/etButtonColor"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Цвет кнопки (пример: #FF0000)"
+        android:padding="10dp"
+        app:layout_constraintTop_toBottomOf="@id/etStatusBarColor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <EditText
+        android:id="@+id/etButtonTextColor"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Цвет текста на кнопке (пример: #FFFFFF)"
+        android:padding="10dp"
+        app:layout_constraintTop_toBottomOf="@id/etButtonColor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@id/etButtonTextColor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

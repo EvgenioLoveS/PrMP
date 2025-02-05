@@ -1,8 +1,9 @@
 package com.example.ios_calculator.logic
 
 import kotlin.math.*
+import com.example.ios_calculator.HistoryLogic.ActionHistoryRepository
 
-class CalculatorLogic {
+class CalculatorLogic(private val actionHistoryRepository: ActionHistoryRepository) {
 
     var currentInput: String = "0"
     var previousInput: String = ""
@@ -44,12 +45,27 @@ class CalculatorLogic {
         }
     }
 
+
     fun onPercentClick() {
-        currentInput = (currentInput.toDoubleOrNull()?.div(100)?.toString()) ?: "Error"
+        val inputValue = currentInput.toDoubleOrNull()
+        if (inputValue != null) {
+            previousInput = currentInput // Сохраняем текущее значение
+            currentInput = (inputValue / 100).toString() // Вычисляем процент
+            actionHistoryRepository.saveActionHistory("Percent of $previousInput = $currentInput")
+        } else {
+            currentInput = "Error"
+        }
     }
 
     fun onSqrtClick() {
-        currentInput = (currentInput.toDoubleOrNull()?.let { sqrt(it) }?.toString()) ?: "Error"
+        val inputValue = currentInput.toDoubleOrNull()
+        if (inputValue != null) {
+            previousInput = currentInput // Сохраняем текущее значение
+            currentInput = sqrt(inputValue).toString() // Вычисляем корень
+            actionHistoryRepository.saveActionHistory("Sqrt of $previousInput = $currentInput")
+        } else {
+            currentInput = "Error"
+        }
     }
 
     fun onTrigonometricClick(func: String): String {
@@ -64,6 +80,7 @@ class CalculatorLogic {
             }
             if (result != null && !result.isNaN()) {
                 currentInput = result.toString()
+                actionHistoryRepository.saveActionHistory("$func($input) = $currentInput")
                 currentInput
             } else {
                 "Error"

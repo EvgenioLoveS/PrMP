@@ -21,13 +21,22 @@
         android:textSize="36sp"
         android:textStyle="bold" />
 
+    <!-- Кнопка для настроек темы -->
+    <Button
+        android:id="@+id/btnOpenThemeSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Theme Settings"
+        android:textSize="20sp"
+        android:layout_marginBottom="4dp" />
+
     <!-- Кнопка для перехода к истории вычислений -->
     <Button
         android:id="@+id/btnHistory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="История"
-        android:textSize="24sp"/>
+        android:textSize="20sp"/>
 
     <GridLayout
         android:layout_width="match_parent"

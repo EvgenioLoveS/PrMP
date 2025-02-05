@@ -1,7 +1,6 @@
-package com.example.ios_calculator.logic
+package com.example.ios_calculator.HistoryLogic
 
 import android.util.Log
-import com.example.ios_calculator.logic.ActionHistory
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase

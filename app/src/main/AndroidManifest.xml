@@ -32,6 +32,11 @@
             android:exported="true"
             android:label="History" />
 
+        <activity
+            android:name=".ThemeSettingsActivity"
+            android:exported="true"
+            android:label="Theme Settings" />
+
     </application>
 
 </manifest>

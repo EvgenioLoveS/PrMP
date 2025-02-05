@@ -2,22 +2,25 @@ package com.example.ios_calculator
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import android.graphics.Color
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.ios_calculator.API.GestureHandler
 import com.example.ios_calculator.API.HapticFeedbackHelper
 import com.example.ios_calculator.logic.CalculatorLogic
-import com.example.ios_calculator.logic.ActionHistoryRepository
+import com.example.ios_calculator.HistoryLogic.ActionHistoryRepository
+import com.example.ios_calculator.ThemeLogic.ActionThemeRepository
+import com.example.ios_calculator.ThemeLogic.ActionTheme
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var tvDisplay: TextView
-    private val calculatorLogic = CalculatorLogic()
+    private lateinit var calculatorLogic: CalculatorLogic
     private lateinit var gestureDetector: GestureDetector
     private lateinit var hapticFeedbackHelper: HapticFeedbackHelper
     private lateinit var actionHistoryRepository: ActionHistoryRepository
@@ -28,9 +31,20 @@ class MainActivity : ComponentActivity() {
         setContentView(R.layout.activity_calculator)
 
         actionHistoryRepository = ActionHistoryRepository()
-
+        calculatorLogic = CalculatorLogic(actionHistoryRepository)
         tvDisplay = findViewById(R.id.tvDisplay)
         hapticFeedbackHelper = HapticFeedbackHelper(this) // Инициализация вибратора
+
+        // Загрузка текущих параметров темы
+        ActionThemeRepository.loadThemeParameters { themeParameters ->
+            applyTheme(themeParameters)
+        }
+
+        // Инициализация кнопки для перехода к настройкам темы
+        findViewById<Button>(R.id.btnOpenThemeSettings).setOnClickListener {
+            val intent = Intent(this, ThemeSettingsActivity::class.java)
+            startActivity(intent)
+        }
 
         // Установка обработчика нажатий на кнопку истории
         findViewById<Button>(R.id.btnHistory).setOnClickListener {
@@ -185,6 +199,58 @@ class MainActivity : ComponentActivity() {
     private fun onSqrtClick() {
         calculatorLogic.onSqrtClick()
         tvDisplay.text = calculatorLogic.currentInput
+    }
+
+    private fun applyTheme(actionTheme: ActionTheme) {
+        // Применение цвета фона
+        findViewById<LinearLayout>(R.id.rootLayout).setBackgroundColor(Color.parseColor(actionTheme.backgroundColor))
+
+        // Применение цвета текста
+        tvDisplay.setTextColor(Color.parseColor(actionTheme.textColor))
+
+        // Применение цвета статус-бара
+//        window.statusBarColor = Color.parseColor(actionTheme.statusBarColor)
+
+        // Применение цвета статус-бара
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            window.statusBarColor = Color.parseColor(actionTheme.statusBarColor)
+        }
+
+        // Применение цвета кнопок
+        val buttons = listOf(
+            findViewById<Button>(R.id.btnAC),
+            findViewById<Button>(R.id.btnEntry),
+            findViewById<Button>(R.id.btnPlusMinus),
+            findViewById<Button>(R.id.btnPercent),
+            findViewById<Button>(R.id.btnDivide),
+            findViewById<Button>(R.id.btnMultiply),
+            findViewById<Button>(R.id.btnMinus),
+            findViewById<Button>(R.id.btnPlus),
+            findViewById<Button>(R.id.btnEquals),
+            findViewById<Button>(R.id.btnDot),
+            findViewById<Button>(R.id.btn0),
+            findViewById<Button>(R.id.btn1),
+            findViewById<Button>(R.id.btn2),
+            findViewById<Button>(R.id.btn3),
+            findViewById<Button>(R.id.btn4),
+            findViewById<Button>(R.id.btn5),
+            findViewById<Button>(R.id.btn6),
+            findViewById<Button>(R.id.btn7),
+            findViewById<Button>(R.id.btn8),
+            findViewById<Button>(R.id.btn9),
+            findViewById<Button>(R.id.btnSin),
+            findViewById<Button>(R.id.btnCos),
+            findViewById<Button>(R.id.btnTan),
+            findViewById<Button>(R.id.btnCtg),
+            findViewById<Button>(R.id.btnSqrt),
+            findViewById<Button>(R.id.btnOpenThemeSettings),
+            findViewById<Button>(R.id.btnHistory)
+        )
+
+        buttons.forEach { button ->
+            button.setBackgroundColor(Color.parseColor(actionTheme.buttonColor)) // Цвет кнопок
+            button.setTextColor(Color.parseColor(actionTheme.buttonTextColor)) // Цвет текста в кнопках
+        }
     }
 
 }
