@@ -1,5 +1,7 @@
 package com.example.ios_calculator
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Intent
 import android.os.Bundle
 import android.view.GestureDetector
@@ -9,6 +11,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import android.graphics.Color
+import android.os.Build
+import android.util.Log
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.ios_calculator.API.GestureHandler
 import com.example.ios_calculator.API.HapticFeedbackHelper
@@ -16,6 +20,7 @@ import com.example.ios_calculator.logic.CalculatorLogic
 import com.example.ios_calculator.HistoryLogic.ActionHistoryRepository
 import com.example.ios_calculator.ThemeLogic.ActionThemeRepository
 import com.example.ios_calculator.ThemeLogic.ActionTheme
+import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : ComponentActivity() {
 
@@ -29,6 +34,17 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calculator)
+
+        createNotificationChannel()
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("FCM", "Fetching FCM registration token failed", task.exception)
+                return@addOnCompleteListener
+            }
+            val token = task.result
+            Log.d("FCM Token", token)
+        }
 
         actionHistoryRepository = ActionHistoryRepository()
         calculatorLogic = CalculatorLogic(actionHistoryRepository)
@@ -69,6 +85,18 @@ class MainActivity : ComponentActivity() {
         }
 
         setupButtons()
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelId = "default_channel_id"
+            val channelName = "Default Channel"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(channelId, channelName, importance)
+
+            val notificationManager = getSystemService(NotificationManager::class.java)
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
     private fun setupButtons() {

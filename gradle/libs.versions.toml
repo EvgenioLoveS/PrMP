@@ -17,7 +17,8 @@ appcompat = "1.7.0"
 [libraries]
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "bomVersion" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore-ktx"}
-
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx"}
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

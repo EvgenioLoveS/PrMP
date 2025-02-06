@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:background="#000000"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:gravity="bottom">
 
 
     <!-- Экран для отображения результата -->
@@ -14,7 +15,7 @@
         android:id="@+id/tvDisplay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+
         android:background="#1C1C1C"
         android:gravity="end|bottom"
         android:padding="24dp"

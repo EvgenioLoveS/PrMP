@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:gravity="bottom">
 
     <!-- Экран для отображения результата -->
     <TextView
         android:id="@+id/tvDisplay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:background="#1C1C1C"
         android:gravity="end|bottom"
         android:padding="24dp"
@@ -27,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Theme Settings"
-        android:textSize="20sp"
+        android:textSize="24sp"
         android:layout_marginBottom="4dp" />
 
     <!-- Кнопка для перехода к истории вычислений -->
@@ -36,7 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="История"
-        android:textSize="20sp"/>
+        android:textSize="24sp"/>
 
     <GridLayout
         android:layout_width="match_parent"
